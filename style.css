@@ -26,6 +26,12 @@ body {
 #display {
     display: flex;
     flex: 3;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.result {
+    color: white;
 }
 
 #keypad {
@@ -49,7 +55,15 @@ button {
     border-radius: 12px;
 }
 
-button.operation {
+button.op {
     background-color: #f78605;
     color: white;
+}
+
+button:focus {
+    opacity: 60%;
+}
+
+button:visited {
+    opacity: 100%;
 }
