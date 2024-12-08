@@ -27,6 +27,12 @@ function operate(operator, num1 = 0, num2 = 0){
     }
 }
 
+function showErrorDisplay(message){
+    clearDisplay();
+    addToDisplay(message);
+    error = true;
+}
+
 function clearDisplay(){
     let displayNum = document.querySelectorAll(".result");
     Array.from(displayNum).map((node) => node.remove());
@@ -66,6 +72,8 @@ function numberKeyLogic(number){
 }
 
 function opKeyLogic(opKey){  //3 behaviours, one at the start of op, in the middle of op and 1 at the end
+
+    //specialised operation keys
     if(opKey === "clear"){ // before any operation, clear operation has higher priority
         clearDisplay();
         screen = [];
@@ -78,14 +86,22 @@ function opKeyLogic(opKey){  //3 behaviours, one at the start of op, in the midd
         return;
     }
     if(opKey === "←"){
-        let displayNum = Array.from(document.querySelectorAll(".result"));
+        let displayNum = Array.from(document.querySelectorAll(".result")); //array of nodes 
         if(displayNum.length > 0){
-            displayNum[displayNum.length - 1].remove();
-            screen.pop();
+            let removedElement = displayNum[displayNum.length - 1];
+            let removedElementTxt = removedElement.textContent;
+            if(removedElementTxt.length > 1){
+                removedElement.textContent = removedElementTxt.slice(0, removedElementTxt.length - 1);
+            }
+            else{
+                removedElement.remove();
+            }
+            if(removedElement === "-") posNeg = true;
+            [...screen].pop(); //spread operator to spread long numbers into individual digits
         } 
         return;
     }
-    if(opKey === "±"){
+    if(opKey === "±"){ //inserts - on left of display if posNeg = true, else removes it
         let displayNum = document.querySelector(".result");
         if(posNeg){
             let displayThing = document.createElement("p");
@@ -95,7 +111,7 @@ function opKeyLogic(opKey){  //3 behaviours, one at the start of op, in the midd
                 display.appendChild(displayThing);
             }
             else{
-                display.insertBefore(displayNum, displayThing);
+                display.insertBefore(displayThing, displayNum);
             }
             screen.unshift("-");
         } else{
@@ -104,21 +120,29 @@ function opKeyLogic(opKey){  //3 behaviours, one at the start of op, in the midd
         posNeg = !posNeg;
         return;
     }
+    
+
+
+    //start of normal function
+
     captureDisplay();
     if(operator === null){ //checks if middle of operation
         operator = opKey;
     } else{ //end of operation, evaluate
         if(operator === "÷" && secondNum === 0){ //handle divide by 0
-            firstNum = 0;
-            clearDisplay();
-            addToDisplay("XD");
-            error = true;
+            showErrorDisplay("XD");
+            return;
         }
         else{
             firstNum = operate(operator, firstNum, secondNum);
             secondNum = 0;
             clearDisplay();
-            addToDisplay(firstNum.toString()); //show results
+            let results = firstNum.toString();
+            if(results.length > 21) {
+                showErrorDisplay("HUGE NUMBER ERROR");            
+                return;
+            }
+            addToDisplay(results); //show results
             operator = opKey;
         }
         if(operator === "=") operator = null;

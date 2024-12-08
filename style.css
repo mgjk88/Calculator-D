@@ -15,8 +15,8 @@ body {
 }
 
 #calculator {
-    width: 35vw;
-    height: 90vh;
+    width: 400px;
+    height: 700px;
     display: flex;
     flex-direction: column;
     background-color: #53575e;
